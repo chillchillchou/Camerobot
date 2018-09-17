@@ -3,13 +3,33 @@ import os
 import json
 import datetime
 import base64
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from flask_cors import *
 
 api = InstagramAPI("camerobot", "choutaojiao")
 api.login()
-app = Flask(__name__)
+
+
+# @app.route('/')
+app = Flask(__name__, static_url_path='/static')
 CORS(app, resources=r'/*')
+
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('js', path)
+
+# @app.route('/style/<path:path>')
+# def send_js(path):
+#     return send_from_directory('style', path)
+#
+# @app.route('/other/<path:path>')
+# def send_js(path):
+#     return send_from_directory('other', path)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
