@@ -26,14 +26,14 @@ var ip, img;
 var snapShots = [];
 
 function preload() {
-  waitText = loadStrings("wait.txt");
+  waitText = loadStrings("static/other/wait.txt");
   waitTextLine = int(random(0, 16));
-  cameraSound = loadSound("clickSound.mp3");
-  greeting = loadSound("greetings.mp3");
+  cameraSound = loadSound("static/other/clickSound.mp3");
+  greeting = loadSound("static/other/greetings.mp3");
 }
 
 function setup() {
-  cnv = createCanvas(768, 1024);
+  cnv = createCanvas(768, 900);
   // cnv = createCanvas(200, 256);
   cnv.id("mycanvas");
 
@@ -140,7 +140,7 @@ function setup() {
   function mousePressed() {
     if (buttonAllowed) {
       // save('camerobot');
-      
+
       canvas.toBlob(function(Blob) {
         saveAs(Blob);
       });

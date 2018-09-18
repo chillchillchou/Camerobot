@@ -14,21 +14,28 @@ api.login()
 app = Flask(__name__, static_url_path='/static')
 CORS(app, resources=r'/*')
 
-@app.route('/js/<path:path>')
-def send_js(path):
-    return send_from_directory('js', path)
-
-@app.route('/style/<path:path>')
-def send_js(path):
-    return send_from_directory('style', path)
-
-@app.route('/other/<path:path>')
-def send_js(path):
-    return send_from_directory('other', path)
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/<path>', methods=['GET'])
+def serve_static(path):
+    if path.endswith('.js'):
+        return send_from_directory('js', path)
+    if path.endswith('.css'):
+        return send_from_directory('style', path)
+    else:
+        return send_from_directory('other', path)
+
+# @app.route('/style/<path:path>')
+# def send_js(path):
+#     return send_from_directory('style', path)
+#
+# @app.route('/other/<path:path>')
+# def send_js(path):
+#     return send_from_directory('other', path)
+
 
 
 @app.route('/upload', methods=['POST'])
