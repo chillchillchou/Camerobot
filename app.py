@@ -3,55 +3,37 @@ import os
 import json
 import datetime
 import base64
-from flask import Flask, render_template, request, send_from_directory
-from flask_cors import *
+
+from picamera import PiCamera
+from time import sleep
+from gpiozero import Button
 
 api = InstagramAPI("camerobot", "choutaojiao")
 api.login()
 
+camera = PiCamera()
+button = Button(17)
 
-# @app.route('/')
-app = Flask(__name__, static_url_path='/static')
-CORS(app, resources=r'/*')
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/<path>', methods=['GET'])
-def serve_static(path):
-    if path.endswith('.js'):
-        return send_from_directory('js', path)
-    if path.endswith('.css'):
-        return send_from_directory('style', path)
-    else:
-        return send_from_directory('other', path)
-
-# @app.route('/style/<path:path>')
-# def send_js(path):
-#     return send_from_directory('style', path)
-#
-# @app.route('/other/<path:path>')
-# def send_js(path):
-#     return send_from_directory('other', path)
-
-
-
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    # print("hello...")
-    file = request.form
-    # print(file['image'])
-    t = datetime.datetime.now()
-    photo_path ="/Users/huiyi/Desktop/Camerobot/" + t.isoformat().replace(":", ".") + ".jpg"
-    f = open(photo_path, 'wb')
-    f.write(base64.b64decode(file['image'].split(",")[1]))
-    f.close()
-    # here = os.path.dirname(os.path.realpath(__file__))
-    # photo_path = os.path.join(here, 'koji.jpg')
-    api.uploadPhoto(photo_path, caption='Hello From ITP Floor #itworks')
+def take_pic():
+    camera.start_preview()
+    button.wait_for_press()
+    sleep(2)
+    
+    camera.annotate_text="Your Picture has been taken"
+    t=datetime.datetime.now()
+    file_path = ('/home/huiyi/itpcam/images/image_' + t.isoformat().replace(":",".")+ '.jpg')
+    camera.capture(file_path)
+    api.uploadPhoto(file_path, caption='Hello From Makers Faire!#Makerfaire2018 #NYC")
     return json.dumps({'status':'OK'})
+ 
+    sleep(3)
+    #button = False
+
+def main():
+    while(1):
+        take_pic()
+    
+
 
 if __name__ == "__main__":
-    app.run()
+    main()
